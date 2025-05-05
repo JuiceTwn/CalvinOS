@@ -1,19 +1,20 @@
-# core/main.py
+import argparse
 import uvicorn
-from shared.logger import get_logger
-from shared.config import Config
-from core.server import app as server_app
+from core import server
+from runtime import run_cli
 
-logger = get_logger(__name__)
+def main():
+    parser = argparse.ArgumentParser(description="Calvin Core Runtime")
+    parser.add_argument("--serve", action="store_true", help="Run FastAPI server")
+    parser.add_argument("--cli", action="store_true", help="Run CLI mode")
+    args = parser.parse_args()
 
-def start():
-    logger.info("🚀 Starting CalvinOS Core...")
-    uvicorn.run(
-        server_app,
-        host="0.0.0.0",
-        port=8000,
-        log_level=Config.LOG_LEVEL.lower()
-    )
+    if args.serve:
+        uvicorn.run("core.server:app", host="0.0.0.0", port=8000, reload=False)
+    elif args.cli:
+        run_cli()
+    else:
+        print("No mode selected. Use --serve or --cli")
 
-if __name__ == '__main__':
-    start()
+if __name__ == "__main__":
+    main()
