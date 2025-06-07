@@ -1,9 +1,16 @@
 from modules.llm.thinker import Thinker
 from modules.memory.memory import Memory
+from modules.skills import handle_prompt
 
 memory = Memory()
 
 def route_input(prompt: str) -> str:
+    # Check dynamic skills first
+    skill_response = handle_prompt(prompt)
+    if skill_response:
+        memory.log("skill_used", f"{prompt} -> {skill_response}")
+        return skill_response
+
     model = Thinker()
 
     try:
