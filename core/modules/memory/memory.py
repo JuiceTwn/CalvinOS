@@ -1,8 +1,21 @@
-import os, json
+import os
+import json
 from datetime import datetime
 from typing import List, Optional, Dict
 
-MEMORY_DIR = "data"
+# Resolve the data directory relative to this file so memory is stored
+# consistently regardless of the current working directory. Previously the
+# module used a relative path ("data") which caused memory files to be created
+# in whichever directory the process was started from. This resulted in new
+# directories like ``./data`` appearing unintentionally when the runtime was
+# executed from the project root.  Using an absolute path rooted at the
+# ``core`` directory ensures existing memory files under ``core/data`` are
+# found and updated correctly.
+
+BASE_DIR = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
+MEMORY_DIR = os.path.join(BASE_DIR, "data")
 MEMORY_FILE = os.path.join(MEMORY_DIR, "calvin_memory.json")
 BACKUP_FILE = os.path.join(MEMORY_DIR, "calvin_memory_backup.json")
 
